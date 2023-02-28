@@ -54,8 +54,8 @@ def transform_data(df, fill_method, std_method):
     imputer_categorical = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
 
     df_num = df._get_numeric_data()
-    df_num = standarize(df_num, std_method)
-    df_num = imputer_numeric.fit_transform(df_num)
+    df_num_std = standarize(df_num, std_method)
+    df_num_final = imputer_numeric.fit_transform(df_num_std)
 
     df_cat = df.drop(df_num.columns, axis=1)
 
@@ -64,7 +64,7 @@ def transform_data(df, fill_method, std_method):
     df_cat_temp = df_cat_encoded.where(~mask)
     df_cat = imputer_categorical.fit_transform(df_cat_temp)
 
-    df_trans = pd.DataFrame(np.concatenate((df_num, df_cat), axis=1), columns=df.columns)
+    df_trans = pd.DataFrame(np.concatenate((df_num_final, df_cat), axis=1), columns=df.columns)
 
     X = df_trans.drop('y', axis=1)
     y = df_trans['y']
