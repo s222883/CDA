@@ -66,8 +66,8 @@ def transform_data(df, fill_method, std_method):
 
     df_trans = pd.DataFrame(np.concatenate((df_num_final, df_cat), axis=1), columns=df.columns)
 
-    X = df_trans.drop('y', axis=1)
-    y = df_trans['y']
+    X = df_trans.drop(columns=['y'])
+    y = df['y']
     
     return X, y
 
