@@ -52,7 +52,7 @@ def transform_data(df, fill_method, std_method):
     # Encode categorical variables
     imputer_numeric = SimpleImputer(missing_values=np.nan, strategy=fill_method)
     imputer_categorical = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
-
+    y = df['y']
     df_num = df._get_numeric_data()
     df_num_std = standarize(df_num, std_method)
     df_num_final = imputer_numeric.fit_transform(df_num_std)
@@ -66,9 +66,7 @@ def transform_data(df, fill_method, std_method):
 
     df_trans = pd.DataFrame(np.concatenate((df_num_final, df_cat), axis=1), columns=df.columns)
 
-    X = df_trans.drop(columns=['y'])
-    y = df['y']
-    
+    X = df_trans.drop('y', axis=1)
     return X, y
 
 
