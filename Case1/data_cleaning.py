@@ -9,7 +9,7 @@ class MultiColumnLabelEncoder:
     def __init__(self,columns = None):
         self.columns = columns # array of column names to encode
 
-    def fit(self,X,y=None):
+    def fit(self, X,y=None):
         return self # not relevant here
 
     def transform(self,X):
@@ -28,12 +28,12 @@ class MultiColumnLabelEncoder:
         return output
 
     def fit_transform(self,X,y=None):
-        return self.fit(X,y).transform(X)
+        return self.fit(X, y).transform(X)
 
 def load_data():
-    df = pd.read_csv(r"case1Data.txt", sep=', ', engine='python')
-    df_Xn = pd.read_csv(r"case1Data_Xnew.txt",  sep=', ', engine='python')
-    return df, df_Xn
+    X = pd.read_csv(r"case1Data.txt", sep=', ', engine='python')
+    X_Xn = pd.read_csv(r"case1Data_Xnew.txt",  sep=', ', engine='python')
+    return X, X_Xn
 
 def standarize(df, method):
     if method == 'standard':
@@ -48,11 +48,11 @@ def standarize(df, method):
         raise ValueError('Invalid standardization method')
     return df
 
-def transform_data(df, fill_method, std_method):
+def transform_data(df, fill_method, std_method='standard'):
     # Encode categorical variables
     imputer_numeric = SimpleImputer(missing_values=np.nan, strategy=fill_method)
     imputer_categorical = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
-    y = df['y']
+    
     df_num = df._get_numeric_data()
     df_num_std = standarize(df_num, std_method)
     df_num_final = imputer_numeric.fit_transform(df_num_std)
@@ -64,10 +64,9 @@ def transform_data(df, fill_method, std_method):
     df_cat_temp = df_cat_encoded.where(~mask)
     df_cat = imputer_categorical.fit_transform(df_cat_temp)
 
-    df_trans = pd.DataFrame(np.concatenate((df_num_final, df_cat), axis=1), columns=df.columns)
+    df_trans = pd.DataFrame(np.concatenate([df_num_final, df_cat], axis=1), columns=df.columns)
 
-    X = df_trans.drop('y', axis=1)
-    return X, y
+    return df_trans
 
 
 
