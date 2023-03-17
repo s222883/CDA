@@ -53,3 +53,42 @@ def twolevelcv(df, k1: int, k2: int, models: list, params: dict, rs: int, fill_m
     # results_df.loc(axis = 1)[method, name, 'Error'][k] = error_test[idx]
     # results_df.loc(axis = 1)[method, name, 'Param. Value'][k] = min_param
     return error_test, test_idx1
+
+class MultiColumnLabelEncoder:
+    def __init__(self,columns = None):
+        self.columns = columns # array of column names to encode
+
+    def fit(self, X,y=None):
+        return self # not relevant here
+
+    def transform(self,X):
+        '''
+        Transforms columns of X specified in self.columns using
+        LabelEncoder(). If no columns specified, transforms all
+        columns in X.
+        '''
+        output = X.copy()
+        if self.columns is not None:
+            for col in self.columns:
+                output[col] = LabelEncoder().fit_transform(output[col])
+        else:
+            for colname,col in output.iteritems():
+                output[colname] = LabelEncoder().fit_transform(col)
+        return output
+
+    def fit_transform(self,X,y=None):
+        return self.fit(X, y).transform(X)
+
+def standarize(df,method):
+    if method == 'standard':
+        df = (df - df.mean()) / df.std()
+    elif method == 'minmax':
+        df = (df - df.min()) / (df.max() - df.min())
+    elif method == 'maxabs':
+        df = df / df.abs().max()
+    elif method == 'robust':
+        df = (df - df.median()) / (df.quantile(0.75) - df.quantile(0.25))
+    else:
+        raise ValueError('Invalid standardization method')
+    return df
+
